@@ -7,7 +7,7 @@
 
 int calc(struct pcb_t *proc)
 {
-	return ((unsigned long)proc & 0UL);
+	return ((unsigned long)proc & 0UL); //Dummy function
 }
 
 int alloc(struct pcb_t *proc, uint32_t size, uint32_t reg_index)
@@ -69,6 +69,7 @@ int run(struct pcb_t *proc)
 	struct inst_t ins = proc->code->text[proc->pc];
 	proc->pc++;
 	int stat = 1;
+	
 switch (ins.opcode)
 	{
 	case CALC:

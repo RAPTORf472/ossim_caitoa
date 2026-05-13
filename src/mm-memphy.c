@@ -14,7 +14,7 @@
  * Memory physical module mm/mm-memphy.c
  */
 
-#include "mm.h"
+#include "mm64.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -184,9 +184,22 @@ int MEMPHY_put_freefp(struct memphy_struct *mp, addr_t fpn)
    /* Create new node with value fpn */
    newnode->fpn = fpn;
    newnode->fp_next = fp;
-   mp->free_fp_list = newnode;
 
+   //The list is empty
+   if (fp == NULL || fp->fpn > fpn)
+   {
+       newnode->fp_next = fp;
+       mp->free_fp_list = newnode;
+       return 0;
+   }
+
+   while (fp->fp_next != NULL && fp->fp_next->fpn < fpn)
+       fp = fp->fp_next;
+
+   newnode->fp_next = fp->fp_next;
+   fp->fp_next = newnode;
    return 0;
+
 }
 
 /*

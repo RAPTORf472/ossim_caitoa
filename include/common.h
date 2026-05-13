@@ -53,7 +53,7 @@ enum ins_opcode_t
 	ALLOC, // Allocate memory
 	FREE,  // Deallocated a memory block
 	READ,  // Write data to a byte on memory
-	WRITE, // Read data from a byte on memory
+	WRITE, // Read data from a byte on memory (Probably a mistake)
 	KMALLOC,           // Allocate kernel memory
 	KMEM_CACHE_CREATE, // Create kernel cache pool
 	KMEM_CACHE_ALLOC,  // Allocate cache memory in cache pool

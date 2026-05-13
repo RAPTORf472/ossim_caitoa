@@ -95,9 +95,8 @@
 
 /* Memory range operator */
 /* TODO implement the INCLUDE and OVERLAP checking mechanism */
-#define INCLUDE(x1,x2,y1,y2) (0)
-#define OVERLAP(x1,x2,y1,y2) (0)
-
+#define INCLUDE(x1,x2,y1,y2) (((x1) < (x2)) && ((y1) > (y2)))
+#define OVERLAP(start1, end1, start2, end2) (((start1) < (end2)) && ((end1) > (start2)))
 /* VM region prototypes */
 struct vm_rg_struct * init_vm_rg(addr_t rg_start, addr_t rg_end);
 int enlist_vm_rg_node(struct vm_rg_struct **rglist, struct vm_rg_struct* rgnode);

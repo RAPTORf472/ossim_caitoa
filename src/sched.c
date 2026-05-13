@@ -5,7 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#define MAX_PRIO 3
+#define MAX_PRIO 140
 
 static struct queue_t ready_queue;
 static struct queue_t run_queue;

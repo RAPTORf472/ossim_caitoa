@@ -8,10 +8,10 @@
 #include "mm64.h"
 #endif
 
-#include <pthread.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <pthread.h>
 
 static int time_slot;
 static int num_cpus;
@@ -61,11 +61,11 @@ static void * cpu_routine(void * args) {
 		 	* ready queue */
 			proc = get_proc();
 			if (proc == NULL) {
-                           next_slot(timer_id);
-                           continue; /* First load failed. skip dummy load */
-                        }
+				next_slot(timer_id);
+				continue; /* First load failed. skip dummy load */
+			}
 		}else if (proc->pc == proc->code->size) {
-			/* The porcess has finish it job */
+			/* The process has finish it job */
 			printf("\tCPU %d: Processed %2d has finished\n",
 				id ,proc->pid);
 			free(proc);
@@ -73,6 +73,7 @@ static void * cpu_routine(void * args) {
 			time_left = 0;
 		}else if (time_left == 0) {
 			/* The process has done its job in current time slot */
+			//Round robin behavior
 			printf("\tCPU %d: Put process %2d to run queue\n",
 				id, proc->pid);
 			put_proc(proc);
@@ -145,13 +146,14 @@ static void * ld_routine(void * args) {
 		while (current_time() < ld_processes.start_time[i]) {
 			next_slot(timer_id);
 		}
-#ifdef MM_PAGING
-		krnl->mm = malloc(sizeof(struct mm_struct));
-		init_mm(krnl->mm, proc);
-		krnl->mram = mram;
-		krnl->mswp = mswp;
-		krnl->active_mswp = active_mswp;
-#endif
+		//1 krnl->mm for every process? Really?
+// #ifdef MM_PAGING
+// 		krnl->mm = malloc(sizeof(struct mm_struct));
+// 		init_mm(krnl->mm, proc);
+// 		krnl->mram = mram;
+// 		krnl->mswp = mswp;
+// 		krnl->active_mswp = active_mswp;
+// #endif
 		printf("\tLoaded a process at %s, PID: %d PRIO: %ld\n",
 			ld_processes.path[i], proc->pid, ld_processes.prio[i]);
 		add_proc(proc);
@@ -252,11 +254,17 @@ int main(int argc, char * argv[]) {
 
 	struct memphy_struct mram;
 	struct memphy_struct mswp[PAGING_MAX_MMSWP];
-
+	#ifdef MM_PAGING
+	os.mm = malloc(sizeof(struct mm_struct));
+	init_mm(os.mm, NULL);
+	os.mram = &mram;
+	os.mswp = mswp;
+	os.active_mswp = &mswp[0];
+	#endif
 	/* Create MEM RAM */
 	init_memphy(&mram, memramsz, rdmflag);
 
-        /* Create all MEM SWAP */ 
+    /* Create all MEM SWAP */ 
 	int sit;
 	for(sit = 0; sit < PAGING_MAX_MMSWP; sit++)
 	       init_memphy(&mswp[sit], memswpsz[sit], rdmflag);

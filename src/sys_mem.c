@@ -27,11 +27,18 @@ int __sys_memmap(struct krnl_t *krnl, uint32_t pid, struct sc_regs* regs)
    int memop = regs->a1;
    BYTE value;
    
-   /* TODO THIS DUMMY CREATE EMPTY PROC TO AVOID COMPILER NOTIFY 
-    *      need to be eliminated
-	*/
-   struct pcb_t *caller = malloc(sizeof(struct pcb_t));
-   caller->krnl = malloc(sizeof(struct krnl_t));
+    struct pcb_t *caller = NULL;
+    struct queue_t *rlist = krnl->running_list;
+
+    for (int i = 0; i < rlist->size; i++) {
+        if (rlist->proc[i]->pid == pid) {
+            caller = rlist->proc[i];
+            break;
+        }
+    }
+
+    if (caller == NULL)
+    return -1;
 
    /*
     * @bksysnet: Please note in the dual spacing design
